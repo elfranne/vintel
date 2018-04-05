@@ -21,6 +21,7 @@ import datetime
 import os
 import time
 import six
+import re
 if six.PY2:
     from io import open
 
@@ -202,7 +203,12 @@ class ChatParser(object):
         # EvE names the file like room_20140913_200737.txt, so we don't need
         # the last 20 chars
         filename = os.path.basename(path)
-        roomname = filename[:-20]
+        # Fix path : Search and replace CCP [] Add
+        if '[' in filename :
+            roomname = re.sub('[.*?]', '', filename)
+            roomname = roomname[:-21]
+        else:
+            roomname = filename[:-20]
         if path not in self.fileData:
             # seems eve created a new file. New Files have 12 lines header
             self.fileData[path] = {"lines": 13}
